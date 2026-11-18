@@ -3,6 +3,14 @@
   const el = id => document.getElementById(id);
   const shell = el('loginShell');
   const forms = [el('emailForm'), el('codeForm'), el('nicknameForm')];
+  if (location.protocol === 'http:' && location.hostname === 'tipljiljankamp.dk') {
+    const link = document.createElement('a');
+    link.href = 'https://mathiasalkhuori23.github.io/tip-ljiljan-kamp-web' +
+      location.pathname + location.search + location.hash;
+    link.textContent = 'Åbn appen på den sikre adresse';
+    el('loginStatus').replaceChildren('Login kræver en sikker forbindelse. ', link);
+    return;
+  }
   const config = window.LJILJAN_BACKEND;
   if (!window.supabase || !config) {
     el('loginStatus').textContent = 'Login kunne ikke indlæses. Prøv at genindlæse siden.';
