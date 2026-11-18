@@ -243,6 +243,11 @@ input::placeholder { color: #adb4d1; opacity: 1; }
 .status { min-height: 1.5em; color: var(--gold-light); margin: 12px 0 0; }
 .result { color: var(--gold-light); font-weight: 700; }
 #aliasStatus:empty { display: none; }
+.auth-panel { max-width: 440px; margin: clamp(24px, 8vh, 90px) auto; }
+.auth-secondary { width: 100%; margin-top: 10px; }
+.auth-logout { flex: none; }
+.auth-checkbox:not([hidden]) { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
+.auth-checkbox input { width: auto; margin: 3px 0 0; accent-color: var(--gold); }
 
 .player-tips { margin: 0 0 16px; padding: 13px; border: 1px solid var(--border); border-radius: 8px; }
 .player-tips legend, .player-tips label { font-size: .9rem; font-weight: 700; }

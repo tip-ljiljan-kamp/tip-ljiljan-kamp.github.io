@@ -3,74 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="app.webmanifest">
-<meta name="description" content="Gæt kampens resultat og se din placering i FK Ljiljans tipkonkurrence.">
-<title>Tip Ljiljan Kamp</title>
+<meta name="theme-color" content="#07081a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://fkljiljan.dk; connect-src 'self' https://cwelrezhdpwwnnojatso.supabase.co; base-uri 'none'; object-src 'none'; form-action 'none'">
+<title>Log ind · Tip Ljiljan Kamp</title>
+<link rel="manifest" href="./app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&amp;family=Barlow+Condensed:wght@700;800&amp;display=swap">
-<link rel="stylesheet" href="./style.css?v=klubdesign">
+<link rel="stylesheet" href="./style.css?v=login">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous" defer></script>
+<script src="./backend-config.js" defer></script>
+<script src="./login.js" defer></script>
 </head>
 <body>
-<header><div class="wrap"><div class="brand"><img class="brand-logo" src="./ljiljan-icon-192.png" width="30" height="30" alt=""><span>F.K. Ljiljan</span></div><nav class="site-tabs" aria-label="Hovedmenu"><a href="./" aria-current="page">Kamptips</a><a href="./mine-tips/">Mine tips</a><a href="./saesontips/">Sæsontips</a><a href="./rangliste/">Rangliste</a><a href="./praemie/">Præmier</a><a href="./stats/">Statistikker</a></nav></div></header>
+<div id="loginShell">
+<header><div class="wrap"><div class="brand"><img class="brand-logo" src="./ljiljan-icon-192.png" width="36" height="36" alt=""><span>F.K. Ljiljan</span></div></div></header>
 <main class="wrap">
-<section class="hero home-hero"><div class="hero-copy"><p class="kicker contest-kicker">Fan­konkurrence</p><h1>Tip Ljiljan Kamp</h1><p>Gæt slutresultatet, saml point, og se hvor du ender på ranglisten.</p></div><img class="hero-logo" src="./ljiljan-logo.png" width="500" height="500" alt="F.K. Ljiljans logo"></section>
-<div class="grid tip-layout">
-<section class="panel schedule" aria-labelledby="program">
-<h2 id="program">Kampprogram</h2>
-<p class="sub">Vælg en kamp for at tippe. Dit tip låses ved kampstart. Se ændringer og nye kampe i <a href="https://fkljiljan.dk/kampe/">klubbens kampprogram</a>.</p>
-<p class="sub" id="matchFeedStatus" role="status">Henter klubbens kampdata…</p>
-<ul id="upcoming"></ul>
-<details><summary id="historyTitle">Tidligere kampe</summary><div id="archive"></div></details>
-</section>
-<section class="panel" id="kamptip" aria-labelledby="match">
-<p class="kicker" id="competition"></p>
-<h2 id="match" class="team-matchup" tabindex="-1"></h2>
-<p class="sub" id="matchDate"></p>
-<form id="guess">
-<div class="score"><label><span id="homeLabel"></span><input id="home" type="number" inputmode="numeric" min="0" max="99" step="1" required placeholder="0"></label><span aria-hidden="true">–</span><label><span id="awayLabel"></span><input id="away" type="number" inputmode="numeric" min="0" max="99" step="1" required placeholder="0"></label></div>
-<fieldset class="player-tips" id="playerTips">
-<legend>Spillertips for F.K. Ljiljan (valgfrit)</legend>
-<details class="player-picker">
-<summary>Vælg målscorere <span id="scorerCount"></span></summary>
-<div class="player-options" id="scorer"></div>
-</details>
-<details class="player-picker">
-<summary>Vælg assistmagere <span id="assistCount"></span></summary>
-<div class="player-options" id="assist"></div>
-</details>
-<p class="help" id="squadStatus">Vælg blandt Ljiljans spillere.</p>
-</fieldset>
-<label class="name">Dit kaldenavn<input id="alias" maxlength="40" required placeholder="Fx LjiljanFan" aria-describedby="aliasStatus"></label>
-<p class="status" id="aliasStatus" role="status"></p>
-<button class="primary" id="save" type="submit">Gem mit tip</button>
+<section class="panel auth-panel" aria-labelledby="loginTitle">
+<h1 id="loginTitle">Log ind</h1>
+<form id="emailForm" hidden>
+<p class="sub">Få en engangskode til Tip Ljiljan Kamp på din e-mail.</p>
+<label for="loginEmail" class="name">E-mail</label>
+<input id="loginEmail" type="email" autocomplete="email" maxlength="254" required>
+<button class="primary" type="submit">Send kode</button>
 </form>
-<p class="status" id="feedback" role="status"></p>
-<p id="result" class="result" hidden></p>
+<form id="codeForm" hidden>
+<p class="sub" id="codeDestination"></p>
+<label for="loginCode" class="name">Engangskode</label>
+<input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" required>
+<button class="primary" type="submit">Log ind</button>
+<button class="secondary auth-secondary" type="button" id="changeEmail">Brug en anden e-mail</button>
+</form>
+<form id="nicknameForm" hidden>
+<p class="sub">Dit kaldenavn vises på ranglisten.</p>
+<label for="loginNickname" class="name">Kaldenavn</label>
+<input id="loginNickname" maxlength="40" autocomplete="nickname" required>
+<label id="legacyOption" class="auth-checkbox" hidden><input type="checkbox" id="claimLegacy"><span id="legacyLabel"></span></label>
+<button class="primary" type="submit">Åbn appen</button>
+<button class="secondary auth-secondary" type="button" id="loginSignout">Log ud</button>
+</form>
+<p class="status" id="loginStatus" role="status">Indlæser login…</p>
 </section>
-<aside class="panel match-preview" id="matchPreview" aria-labelledby="previewTitle">
-<h2 id="previewTitle">Optakt</h2>
-<h3>Ljiljans seneste fem resultater</h3>
-<ul class="preview-results" id="recentResults"></ul>
-<p class="sub" id="recentResultsEmpty" hidden>Ingen registrerede resultater.</p>
-<div id="opponentHistorySection" hidden>
-<h3 id="opponentHistoryTitle">Tidligere opgør</h3>
-<ul class="preview-results" id="opponentHistory"></ul>
-<p class="sub" id="opponentHistoryEmpty" hidden>Ingen tidligere opgør</p>
-</div>
-</aside>
-</div>
 </main>
-<footer class="wrap">Dine nye kamptips gemmes i konkurrencen. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
-<script src="./backend-config.js"></script>
-<script src="./api.js"></script>
-<script src="fixtures.js?v=optakt"></script>
-<script src="logos.js"></script>
-<script src="players.js"></script>
-<script src="tips.js?v=4"></script>
-<script src="player-positions.js"></script>
-<script src="kampdata.js"></script>
-<script src="competition-client.js"></script>
-<script src="app.js?v=18"></script>
+</div>
+<noscript><p class="wrap">Slå JavaScript til for at logge ind.</p></noscript>
 </body>
 </html>

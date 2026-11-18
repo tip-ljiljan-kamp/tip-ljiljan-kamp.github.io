@@ -3,32 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Gæt FK Ljiljans slutplacering for Serie 3 og Serie 5.">
-<title>Sæsontips · Tip Ljiljan Kamp</title>
+<meta name="theme-color" content="#07081a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://fkljiljan.dk; connect-src 'self' https://cwelrezhdpwwnnojatso.supabase.co; base-uri 'none'; object-src 'none'; form-action 'none'">
+<title>Log ind · Tip Ljiljan Kamp</title>
+<link rel="manifest" href="../app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&amp;family=Barlow+Condensed:wght@700;800&amp;display=swap">
-<link rel="stylesheet" href="../style.css?v=klubdesign">
+<link rel="stylesheet" href="../style.css?v=login">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous" defer></script>
+<script src="../backend-config.js" defer></script>
+<script src="../login.js" defer></script>
 </head>
 <body>
-<header><div class="wrap"><div class="brand"><img class="brand-logo" src="../ljiljan-icon-192.png" width="30" height="30" alt=""><span>F.K. Ljiljan</span></div><nav class="site-tabs" aria-label="Hovedmenu"><a href="../">Kamptips</a><a href="../mine-tips/">Mine tips</a><a href="../saesontips/" aria-current="page">Sæsontips</a><a href="../rangliste/">Rangliste</a><a href="../praemie/">Præmier</a><a href="../stats/">Statistikker</a></nav></div></header>
+<div id="loginShell">
+<header><div class="wrap"><div class="brand"><img class="brand-logo" src="../ljiljan-icon-192.png" width="36" height="36" alt=""><span>F.K. Ljiljan</span></div></div></header>
 <main class="wrap">
-<section class="hero"><div class="pitch" aria-hidden="true"></div><div class="hero-copy"><p class="kicker contest-kicker">Forår 2027</p><h1>Sæsontips</h1><p>Gæt, hvor Ljiljan ender i tabellen.</p></div><img class="hero-logo" src="../ljiljan-logo.png" width="500" height="500" alt="F.K. Ljiljans logo"></section>
-<section class="panel season" id="saesontip" aria-labelledby="seasonTitle">
-<h2 id="seasonTitle">Hvor ender Ljiljan?</h2>
-<p class="sub">Gæt slutplaceringen for Serie 3, Serie 5 eller begge hold. Placeringerne 1–12 er foreløbige, indtil forårets puljer er bekræftet.</p>
-<form id="seasonGuess">
-<label for="seasonTeam">Hold</label>
-<select id="seasonTeam"><option value="serie3">Serie 3</option><option value="serie5">Serie 5</option></select>
-<label for="place">Slutplacering</label>
-<select id="place" required><option value="">Vælg en placering</option></select>
-<button class="primary" type="submit">Gem min slutplacering</button>
+<section class="panel auth-panel" aria-labelledby="loginTitle">
+<h1 id="loginTitle">Log ind</h1>
+<form id="emailForm" hidden>
+<p class="sub">Få en engangskode til Tip Ljiljan Kamp på din e-mail.</p>
+<label for="loginEmail" class="name">E-mail</label>
+<input id="loginEmail" type="email" autocomplete="email" maxlength="254" required>
+<button class="primary" type="submit">Send kode</button>
 </form>
-<p class="status" id="seasonFeedback" role="status"></p>
+<form id="codeForm" hidden>
+<p class="sub" id="codeDestination"></p>
+<label for="loginCode" class="name">Engangskode</label>
+<input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" required>
+<button class="primary" type="submit">Log ind</button>
+<button class="secondary auth-secondary" type="button" id="changeEmail">Brug en anden e-mail</button>
+</form>
+<form id="nicknameForm" hidden>
+<p class="sub">Dit kaldenavn vises på ranglisten.</p>
+<label for="loginNickname" class="name">Kaldenavn</label>
+<input id="loginNickname" maxlength="40" autocomplete="nickname" required>
+<label id="legacyOption" class="auth-checkbox" hidden><input type="checkbox" id="claimLegacy"><span id="legacyLabel"></span></label>
+<button class="primary" type="submit">Åbn appen</button>
+<button class="secondary auth-secondary" type="button" id="loginSignout">Log ud</button>
+</form>
+<p class="status" id="loginStatus" role="status">Indlæser login…</p>
 </section>
 </main>
-<footer class="wrap">Dine tips gemmes i denne browser. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
-<script src="../tips.js"></script>
-<script src="../season.js"></script>
+</div>
+<noscript><p class="wrap">Slå JavaScript til for at logge ind.</p></noscript>
 </body>
 </html>

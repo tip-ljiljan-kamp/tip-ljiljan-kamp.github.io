@@ -3,83 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Se spillernes statistik fra F.K. Ljiljan.">
-<title>Statistikker · Tip Ljiljan Kamp</title>
+<meta name="theme-color" content="#07081a">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://fkljiljan.dk; connect-src 'self' https://cwelrezhdpwwnnojatso.supabase.co; base-uri 'none'; object-src 'none'; form-action 'none'">
+<title>Log ind · Tip Ljiljan Kamp</title>
+<link rel="manifest" href="../app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&amp;family=Barlow+Condensed:wght@700;800&amp;display=swap">
-<link rel="stylesheet" href="../style.css?v=klubdesign">
+<link rel="stylesheet" href="../style.css?v=login">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous" defer></script>
+<script src="../backend-config.js" defer></script>
+<script src="../login.js" defer></script>
 </head>
 <body>
-<header><div class="wrap"><div class="brand"><img class="brand-logo" src="../ljiljan-icon-192.png" width="30" height="30" alt=""><span>F.K. Ljiljan</span></div><nav class="site-tabs" aria-label="Hovedmenu"><a href="../">Kamptips</a><a href="../mine-tips/">Mine tips</a><a href="../saesontips/">Sæsontips</a><a href="../rangliste/">Rangliste</a><a href="../praemie/">Præmier</a><a href="../stats/" aria-current="page">Statistikker</a></nav></div></header>
+<div id="loginShell">
+<header><div class="wrap"><div class="brand"><img class="brand-logo" src="../ljiljan-icon-192.png" width="36" height="36" alt=""><span>F.K. Ljiljan</span></div></div></header>
 <main class="wrap">
-<section class="hero"><div class="pitch" aria-hidden="true"></div><div class="hero-copy"><p class="kicker contest-kicker">F.K. Ljiljan</p><h1>Statistikker</h1></div><img class="hero-logo" src="../ljiljan-logo.png" width="500" height="500" alt="F.K. Ljiljans logo"></section>
-<p class="sub">Vælg en spiller for at se alle oplyste sæsoner og de samlede klubtal.</p>
-<section class="panel stats-panel" aria-label="Spillerstatistik">
-<div class="stats-scroll" role="region" aria-label="Spillere sorteret efter position" tabindex="0">
-<table class="stats-table"><thead><tr><th scope="col">Nr.</th><th scope="col">Spiller</th><th scope="col" class="stats-position">Position</th></tr></thead>
-<tbody>
-<tr><td>80</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Midhad Mehanović</button></th><td class="stats-position">Målmand</td></tr>
-<tr><td>1</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Umut Batuhan Esen</button></th><td class="stats-position">Målmand</td></tr>
-<tr><td>14</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Ali Awani</button></th><td class="stats-position">Højreback</td></tr>
-<tr><td>20</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Emin Mehanović</button></th><td class="stats-position">Højreback</td></tr>
-<tr><td>16</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Armin Mehanović</button></th><td class="stats-position">Centerback</td></tr>
-<tr><td>4</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Markus Johnsøn</button></th><td class="stats-position">Centerback</td></tr>
-<tr><td>19</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Aldin Salihović</button></th><td class="stats-position">Venstreback</td></tr>
-<tr><td>2</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Gabriel Tokić</button></th><td class="stats-position">Venstreback</td></tr>
-<tr><td>37</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Sulayman Rifai</button></th><td class="stats-position">Venstreback</td></tr>
-<tr><td>6</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Almin Dedić</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>12</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Behzad Saberi</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>40</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Ditlev Sonne</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>3</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Haris Mehanović</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>29</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Haris Muratović</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>15</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Kenan Dupovac</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>26</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Marcel Novko</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>35</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Mustafa Behlić</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>31</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Noah Matti Hansen</button></th><td class="stats-position">Forsvar</td></tr>
-<tr><td>8</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Mikail Raissi</button></th><td class="stats-position">Defensiv midtbane</td></tr>
-<tr><td>30</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Adnan Mehanović</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>13</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Amil Mehanović</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>38</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Amir Dubica</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>18</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Arda Toy</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>23</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Jehja El-Hashemi</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>33</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Mathias Al-Khuori</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>5</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Muris Behlić</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>28</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Omar Mubarak</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>99</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Sami Kamel</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>36</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Samuel Mørkøre</button></th><td class="stats-position">Midtbane</td></tr>
-<tr><td>7</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Ismail Elmekkaoui</button></th><td class="stats-position">Højrekant</td></tr>
-<tr><td>11</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Salah El Youssef</button></th><td class="stats-position">Højrekant</td></tr>
-<tr><td>9</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Amar Husić</button></th><td class="stats-position">Venstrekant</td></tr>
-<tr><td>17</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Almin Handanagić</button></th><td class="stats-position">Angriber</td></tr>
-<tr><td>47</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Amar Handanagić</button></th><td class="stats-position">Angriber</td></tr>
-<tr><td>32</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Emil Frænde</button></th><td class="stats-position">Angriber</td></tr>
-<tr><td>25</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Said Dedić</button></th><td class="stats-position">Angriber</td></tr>
-<tr><td>22</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Admir Avdić</button></th><td class="stats-position">Angreb</td></tr>
-<tr><td>27</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Ajdin Behlić</button></th><td class="stats-position">Angreb</td></tr>
-<tr><td>34</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Amar Balić</button></th><td class="stats-position">Angreb</td></tr>
-<tr><td>21</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Eldin Avdić</button></th><td class="stats-position">Angreb</td></tr>
-<tr><td>39</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Oliver Presutti Hansen</button></th><td class="stats-position">Angreb</td></tr>
-<tr><td>10</td><th scope="row"><button type="button" class="history-player" aria-haspopup="dialog">Sean Karalic</button></th><td class="stats-position">Angreb</td></tr>
-</tbody></table>
-</div>
+<section class="panel auth-panel" aria-labelledby="loginTitle">
+<h1 id="loginTitle">Log ind</h1>
+<form id="emailForm" hidden>
+<p class="sub">Få en engangskode til Tip Ljiljan Kamp på din e-mail.</p>
+<label for="loginEmail" class="name">E-mail</label>
+<input id="loginEmail" type="email" autocomplete="email" maxlength="254" required>
+<button class="primary" type="submit">Send kode</button>
+</form>
+<form id="codeForm" hidden>
+<p class="sub" id="codeDestination"></p>
+<label for="loginCode" class="name">Engangskode</label>
+<input id="loginCode" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,10}" maxlength="10" required>
+<button class="primary" type="submit">Log ind</button>
+<button class="secondary auth-secondary" type="button" id="changeEmail">Brug en anden e-mail</button>
+</form>
+<form id="nicknameForm" hidden>
+<p class="sub">Dit kaldenavn vises på ranglisten.</p>
+<label for="loginNickname" class="name">Kaldenavn</label>
+<input id="loginNickname" maxlength="40" autocomplete="nickname" required>
+<label id="legacyOption" class="auth-checkbox" hidden><input type="checkbox" id="claimLegacy"><span id="legacyLabel"></span></label>
+<button class="primary" type="submit">Åbn appen</button>
+<button class="secondary auth-secondary" type="button" id="loginSignout">Log ud</button>
+</form>
+<p class="status" id="loginStatus" role="status">Indlæser login…</p>
 </section>
-<dialog class="panel history-dialog" id="playerHistory" aria-labelledby="historyPlayerName">
-<div class="history-heading">
-<div><p class="kicker">Sæson for sæson</p><div class="history-player-title"><h2 id="historyPlayerName"></h2><span id="historyPortrait"></span></div></div>
-<form method="dialog"><button class="secondary" autofocus>Luk</button></form>
-</div>
-<p class="sub" id="historyEmpty" hidden></p>
-<div class="stats-scroll" id="historyScroll" role="region" aria-label="Sæsonhistorik" tabindex="0">
-<table class="stats-table history-table"><thead id="historyColumns"></thead><tbody id="historyRows"></tbody></table>
-</div>
-<p class="sub"><a id="historySource" href="https://fkljiljan.dk/truppen/">Spillerprofil på klubbens hjemmeside</a></p>
-</dialog>
 </main>
-<footer class="wrap">Dine tips gemmes i denne browser. · <a href="https://fkljiljan.dk/">Klubbens hjemmeside</a></footer>
-<script src="../backend-config.js"></script>
-<script src="../api.js"></script>
-<script src="../stats-history-data.js"></script>
-<script src="../stats-history.js?v=5"></script>
+</div>
+<noscript><p class="wrap">Slå JavaScript til for at logge ind.</p></noscript>
 </body>
 </html>
