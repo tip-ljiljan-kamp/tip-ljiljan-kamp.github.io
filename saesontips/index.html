@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07081a">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' blob: https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://fkljiljan.dk; connect-src 'self' https://cwelrezhdpwwnnojatso.supabase.co; base-uri 'none'; object-src 'none'; form-action 'none'">
-<title>Log ind · Tip Ljiljan Kamp</title>
+<title>Tip Ljiljan Kamp</title>
 <link rel="manifest" href="../app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,13 +13,13 @@
 <link rel="stylesheet" href="../style.css?v=kampstatistik3">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js" integrity="sha384-uteMfOloLDGt042uDz+xHGF3ym63/WQ6rFq7murQRG8Ih7QrXGEGNtWd8688sb4O" crossorigin="anonymous" defer></script>
 <script src="../backend-config.js" defer></script>
-<script src="../login.js?v=sikker-adresse" defer></script>
+<script src="../login.js?v=faneskift" defer></script>
 </head>
 <body>
 <div id="loginShell">
 <header><div class="wrap"><div class="brand"><img class="brand-logo" src="../ljiljan-icon-192.png" width="36" height="36" alt=""><span>F.K. Ljiljan</span></div></div></header>
 <main class="wrap">
-<section class="panel auth-panel" aria-labelledby="loginTitle">
+<section class="panel auth-panel" id="loginPanel" aria-labelledby="loginTitle" hidden>
 <h1 id="loginTitle">Log ind</h1>
 <form id="emailForm" hidden>
 <p class="sub">Få en engangskode til Tip Ljiljan Kamp på din e-mail.</p>
@@ -42,7 +42,7 @@
 <button class="primary" type="submit">Åbn appen</button>
 <button class="secondary auth-secondary" type="button" id="loginSignout">Log ud</button>
 </form>
-<p class="status" id="loginStatus" role="status">Indlæser login…</p>
+<p class="status" id="loginStatus" role="status"></p>
 </section>
 </main>
 </div>

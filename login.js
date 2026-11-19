@@ -2,8 +2,18 @@
   const root = new URL('.', document.currentScript.src);
   const el = id => document.getElementById(id);
   const shell = el('loginShell');
+  const panel = el('loginPanel');
   const forms = [el('emailForm'), el('codeForm'), el('nicknameForm')];
+  let loadingTimer;
+
+  function showPanel(title) {
+    clearTimeout(loadingTimer);
+    el('loginTitle').textContent = title;
+    panel.hidden = false;
+  }
+
   if (location.protocol === 'http:' && location.hostname === 'tipljiljankamp.dk') {
+    showPanel('Sikker forbindelse');
     const link = document.createElement('a');
     link.href = 'https://mathiasalkhuori23.github.io/tip-ljiljan-kamp-web' +
       location.pathname + location.search + location.hash;
@@ -13,6 +23,7 @@
   }
   const config = window.LJILJAN_BACKEND;
   if (!window.supabase || !config) {
+    showPanel('Appen kunne ikke åbnes');
     el('loginStatus').textContent = 'Login kunne ikke indlæses. Prøv at genindlæse siden.';
     return;
   }
@@ -26,7 +37,9 @@
 
   function show(form, message = '') {
     for (const item of forms) item.hidden = item !== form;
-    el('loginTitle').textContent = form === el('nicknameForm') ? 'Vælg kaldenavn' : 'Log ind';
+    const title = form === el('nicknameForm') ? 'Vælg kaldenavn' : 'Log ind';
+    showPanel(title);
+    document.title = title + ' · Tip Ljiljan Kamp';
     el('loginStatus').textContent = message;
   }
 
@@ -45,7 +58,11 @@
       cache: 'no-store'
     });
     const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || 'Appen kunne ikke åbnes. Prøv igen.');
+    if (!response.ok) {
+      const error = new Error(result.error || 'Appen kunne ikke åbnes. Prøv igen.');
+      error.status = response.status;
+      throw error;
+    }
     return result;
   }
 
@@ -95,6 +112,7 @@
     content.querySelector('header .brand').after(logout);
     document.title = view.title;
     mounted = true;
+    clearTimeout(loadingTimer);
     shell.remove();
     content.replaceWith(...content.childNodes);
   }
@@ -103,6 +121,16 @@
     if (!current) {
       show(el('emailForm'));
       return;
+    }
+    try {
+      await mount(current);
+      return;
+    } catch (error) {
+      if (error.status === 401) {
+        show(el('emailForm'), 'Log ind igen for at fortsætte.');
+        return;
+      }
+      if (error.status !== 403) throw error;
     }
     const profile = await request('/api/account', current);
     if (profile.name) {
@@ -196,10 +224,18 @@
   client.auth.onAuthStateChange(event => {
     if (mounted && event === 'SIGNED_OUT') location.reload();
   });
-  window.addEventListener('pageshow', event => {
-    if (event.persisted && mounted) location.reload();
+  window.addEventListener('pagehide', event => {
+    if (event.persisted && mounted) document.body.hidden = true;
   });
+  window.addEventListener('pageshow', async event => {
+    if (!event.persisted || !mounted) return;
+    const current = await session().catch(() => null);
+    if (current?.user.id !== window.ljiljanAccountId) location.reload();
+    else document.body.hidden = false;
+  });
+  loadingTimer = setTimeout(() => showPanel('Indlæser siden…'), 450);
   session().then(enter).catch(error => {
+    showPanel('Appen kunne ikke åbnes');
     el('loginStatus').textContent = error.message || 'Login kunne ikke indlæses. Genindlæs siden.';
   });
 })();
