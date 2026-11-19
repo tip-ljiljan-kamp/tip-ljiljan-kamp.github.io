@@ -33,7 +33,8 @@
   const guestSessionKey = 'ljiljan:session:' + config.url;
   let email = '';
   let busy = false;
-  let mounted = false;
+  let activeView;
+  let navigation;
 
   function show(form, message = '') {
     for (const item of forms) item.hidden = item !== form;
@@ -43,7 +44,7 @@
     el('loginStatus').textContent = message;
   }
 
-  async function request(path, session, data) {
+  async function request(path, session, data, signal) {
     const headers = {
       apikey: config.key,
       Authorization: 'Bearer ' + session.access_token
@@ -55,7 +56,7 @@
     if (data) headers['Content-Type'] = 'application/json';
     const response = await fetch(config.url + '/functions/v1/ljiljan' + path, {
       headers, method: data ? 'POST' : 'GET', body: data ? JSON.stringify(data) : undefined,
-      cache: 'no-store'
+      cache: 'no-store', signal
     });
     const result = await response.json().catch(() => ({}));
     if (!response.ok) {
@@ -72,35 +73,60 @@
     return data.session;
   }
 
-  async function mount(current) {
-    const page = '/' + location.pathname.slice(root.pathname.length).replace(/index\.html$/, '');
-    const view = await request('/api/app/view?page=' + encodeURIComponent(page), current);
+  function pagePath(destination) {
+    return '/' + destination.pathname.slice(root.pathname.length).replace(/index\.html$/, '');
+  }
+
+  async function mount(current, destination = new URL(location.href), pending) {
+    const view = await request('/api/app/view?page=' + encodeURIComponent(pagePath(destination)), current, undefined, pending?.signal);
     const template = document.createElement('template');
     template.innerHTML = view.body;
+    for (const element of template.content.querySelectorAll('[href], [src]')) {
+      for (const attribute of ['href', 'src']) {
+        if (element.hasAttribute(attribute)) {
+          element.setAttribute(attribute, new URL(element.getAttribute(attribute), destination).href);
+        }
+      }
+    }
     const content = document.createElement('div');
-    content.hidden = true;
     content.append(template.content);
-    document.body.append(content);
-    window.ljiljanAuth = client;
-    window.ljiljanAccountId = current.user.id;
-
+    const lifetime = new AbortController();
+    const intervals = [];
+    lifetime.signal.addEventListener('abort', () => intervals.forEach(id => clearInterval(id)), {once:true});
+    const viewDocument = {
+      getElementById: id => content.querySelector('#' + CSS.escape(id)),
+      querySelectorAll: selector => content.querySelectorAll(selector),
+      createElement: name => document.createElement(name)
+    };
+    const viewWindow = {
+      LJILJAN_BACKEND: config,
+      ljiljanAuth: client,
+      ljiljanAccountId: current.user.id,
+      addEventListener: (name, listener) => window.addEventListener(name, listener, {signal:lifetime.signal})
+    };
+    const startInterval = (callback, delay) => {
+      const id = setInterval(callback, delay);
+      intervals.push(id);
+      return id;
+    };
     try {
-      for (const source of view.scripts) {
-        const url = URL.createObjectURL(new Blob([source], {type: 'text/javascript'}));
+      if (view.scripts.length) {
+        const source = 'export default function (document, window, location, setInterval) {\n' +
+          view.scripts.join('\n') + '\n}';
+        const url = URL.createObjectURL(new Blob([source], {type:'text/javascript'}));
         try {
-          await new Promise((resolve, reject) => {
-            const script = document.createElement('script');
-            script.src = url;
-            script.onload = resolve;
-            script.onerror = () => reject(new Error('Appen kunne ikke åbnes. Genindlæs siden.'));
-            document.head.append(script);
-          });
+          const {default:initialize} = await import(url);
+          if (pending?.signal.aborted) {
+            lifetime.abort();
+            return;
+          }
+          initialize(viewDocument, viewWindow, destination, startInterval);
         } finally {
           URL.revokeObjectURL(url);
         }
       }
     } catch (error) {
-      content.remove();
+      lifetime.abort();
       throw error;
     }
 
@@ -110,12 +136,66 @@
     logout.textContent = 'Log ud';
     logout.addEventListener('click', signOut);
     content.querySelector('header .brand').after(logout);
+    if (pending?.signal.aborted) {
+      lifetime.abort();
+      return;
+    }
+    if (pending?.push) history.pushState(null, '', destination.href);
+    const previous = activeView;
+    (previous?.content ?? shell).replaceWith(content);
+    previous?.lifetime.abort();
+    activeView = {content, lifetime, destination, accountId:current.user.id};
+    if (pending) {
+      window.scrollTo(0, 0);
+      content.querySelector('.site-tabs [aria-current="page"]')?.focus({preventScroll:true});
+    }
     document.title = view.title;
-    mounted = true;
     clearTimeout(loadingTimer);
-    shell.remove();
-    content.replaceWith(...content.childNodes);
   }
+
+  const menuPages = new Set(['/', '/mine-tips/', '/saesontips/', '/rangliste/', '/praemie/', '/stats/']);
+
+  function isMenuPage(destination) {
+    return destination.origin === location.origin && destination.pathname.startsWith(root.pathname) &&
+      menuPages.has(pagePath(destination));
+  }
+
+  async function navigate(destination, push) {
+    navigation?.abort();
+    const next = new AbortController();
+    navigation = next;
+    try {
+      const current = await session();
+      if (next.signal.aborted) return;
+      if (current?.user.id !== activeView.accountId) throw new Error('Login kræves.');
+      await mount(current, destination, {signal:next.signal, push});
+    } catch {
+      if (!next.signal.aborted) location.assign(destination.href);
+    } finally {
+      if (navigation === next) navigation = undefined;
+    }
+  }
+
+  document.addEventListener('click', event => {
+    const link = event.target.closest('.site-tabs a[href]');
+    if (!activeView || !link || event.defaultPrevented || event.button !== 0 ||
+        event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || link.target) return;
+    const destination = new URL(link.href);
+    if (!isMenuPage(destination)) return;
+    event.preventDefault();
+    if (destination.href !== location.href) void navigate(destination, true);
+    else navigation?.abort();
+  });
+  window.addEventListener('popstate', () => {
+    const destination = new URL(location.href);
+    if (!activeView || !isMenuPage(destination)) return;
+    const previous = activeView.destination;
+    if (previous.pathname !== destination.pathname || previous.search !== destination.search) {
+      void navigate(destination, false);
+    } else {
+      navigation?.abort();
+    }
+  });
 
   async function enter(current) {
     if (!current) {
@@ -222,15 +302,15 @@
   });
   el('loginSignout').addEventListener('click', signOut);
   client.auth.onAuthStateChange(event => {
-    if (mounted && event === 'SIGNED_OUT') location.reload();
+    if (activeView && event === 'SIGNED_OUT') location.reload();
   });
   window.addEventListener('pagehide', event => {
-    if (event.persisted && mounted) document.body.hidden = true;
+    if (event.persisted && activeView) document.body.hidden = true;
   });
   window.addEventListener('pageshow', async event => {
-    if (!event.persisted || !mounted) return;
+    if (!event.persisted || !activeView) return;
     const current = await session().catch(() => null);
-    if (current?.user.id !== window.ljiljanAccountId) location.reload();
+    if (current?.user.id !== activeView.accountId) location.reload();
     else document.body.hidden = false;
   });
   loadingTimer = setTimeout(() => showPanel('Indlæser siden…'), 450);
